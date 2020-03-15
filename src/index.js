@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import APIGUI from './APIGUI';
+import App from './App';
 
 export default function main({portletNamespace, contextPath, portletElementId, configuration}) {
 	ReactDOM.render(
-		<APIGUI 
+		<App 
 			portletNamespace={portletNamespace}
 			contextPath={contextPath}
 			portletElementId={portletElementId}
 			configuration={configuration}
-			/>, 
+		/>,
 		document.getElementById(portletElementId)
-	); 
+	);
 }

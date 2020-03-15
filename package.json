@@ -15,6 +15,7 @@
 		"@babel/preset-react": "^7.7.4"
 	},
 	"dependencies": {
+		"@clayui/alert": "^3.3.0",
 		"@clayui/badge": "^3.0.1",
 		"@clayui/button": "^3.3.0",
 		"@clayui/form": "^3.6.0",

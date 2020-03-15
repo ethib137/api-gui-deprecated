@@ -2,7 +2,7 @@ import React from 'react';
 
 import ClayIcon from '@clayui/icon';
 
-const spritemap = themeDisplay.getPathThemeImages() + '/lexicon/icons.svg';
+export const spritemap = themeDisplay.getPathThemeImages() + '/lexicon/icons.svg';
 
 const Icon = (props) => {
 	const {symbol, ...otherProps} = props;
