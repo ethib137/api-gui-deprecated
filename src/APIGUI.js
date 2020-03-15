@@ -4,6 +4,7 @@ import ClayForm, {ClaySelect} from '@clayui/form';
 
 import APIDisplay from './APIDisplay';
 import CategoryList from './CategoryList';
+import SchemaExplorer from './SchemaExplorer';
 import SchemaList from './SchemaList';
 
 import useSearchParams from './hooks/useSearchParams';
@@ -24,9 +25,10 @@ const APIGUI = props => {
 	const [selectedCategoryKey, setSelectedCategoryKey] = useSearchParams('APIGroup');
 	const [path, setPath] = useSearchParams('path');
 	const [selectedMethod, setMethod] = useSearchParams('method');
+	const [isExploringSchemas, setIsExploringSchemas] = useSearchParams('exploring-schemas', false);
 
 	useEffect(() => {
-		if (paths) {
+		if (paths && path) {
 			setMethod(Object.keys(paths[path])[0])
 		}
 	},[path]);
@@ -69,10 +71,26 @@ const APIGUI = props => {
 				<div className="row">
 					<div className="col col-md-5 border p-0 overflow-auto vh-100">
 						<ClayForm.Group className="px-3 pt-3">
-							<label htmlFor="categorySelect">{'Select API Category'}</label>
+							<label className="d-flex justify-content-between" htmlFor="categorySelect">
+								<span>{'Select API Category'}</span>								
+
+								{schemas &&
+									<a
+										href="javascript:;"
+										onClick={() => {
+											setIsExploringSchemas(!isExploringSchemas);
+										}}
+									>
+										{isExploringSchemas ? 'Hide Schemas' : 'Show Schemas'}
+									</a>
+								}
+							</label>
 							<ClaySelect
 								aria-label="Select API Category"
-								onChange={e => {setSelectedCategoryKey(e.currentTarget.value); setPath();}}
+								onChange={e => {
+									setPath();
+									setSelectedCategoryKey(e.currentTarget.value);
+								}}
 								value={selectedCategoryKey}
 							>
 								{Object.keys(apiCategories).map(key => (
@@ -98,7 +116,7 @@ const APIGUI = props => {
 					</div>
 
 					<div className="col col-md-7 border p-3 overflow-auto vh-100">
-						{path && paths && paths[path][selectedMethod] && 
+						{path && paths && paths[path][selectedMethod] && !isExploringSchemas &&
 							<APIDisplay
 								baseURL={getBaseURL(categoryURL)}
 								path={path}
@@ -106,6 +124,10 @@ const APIGUI = props => {
 								selectedMethod={selectedMethod}
 								setMethod={setMethod}
 							/>
+						}
+
+						{isExploringSchemas && schemas &&
+							<SchemaExplorer category={selectedCategoryKey} schemas={schemas} />
 						}
 					</div>
 

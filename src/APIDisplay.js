@@ -23,9 +23,12 @@ const APIDisplay = ({baseURL, path, pathData, selectedMethod, setMethod}) => {
 
 	return (
 		<div>
-			<h1>{path} <MethodBadge method={selectedMethod} /></h1>
+			<h1 className="align-items-center d-flex">
+				{path}
+				<MethodBadge className="ml-2" method={selectedMethod} />
+			</h1>
 
-			<div className="align-items-center d-flex">
+			<div className="align-items-center d-flex mb-4">
 				{Object.keys(pathData).map(method => (
 					<button className="btn-unstyled d-flex text-light" key={method} onClick={() => setMethod(method)}>
 						<MethodBadge className={'flex-shrink-0'} displayType={method != selectedMethod ? 'secondary' : null} method={method} />
