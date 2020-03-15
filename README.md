@@ -12,6 +12,10 @@ View results of API requests and see examples of how to make the request using J
 
 ![API GUI Result](/images/APIGUIResult.png)
 
+Explore available schemas.
+
+![API GUI Result](/images/schemaExplorer.png)
+
 ## How to Build and Deploy to Liferay
 
 Update `.npmbuildrc` so that `liferayDir` points to your local Liferay bundle.
