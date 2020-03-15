@@ -2,7 +2,7 @@ import React from 'react';
 
 import javascriptExample from './templates/javascriptExample';
 
-style = {
+const style = {
 	overflow: 'visible',
 	tabSize: 4
 };

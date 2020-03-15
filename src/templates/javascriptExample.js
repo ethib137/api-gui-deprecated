@@ -1,4 +1,4 @@
-export default javascriptExample = (method, url) => (
+const javascriptExample = (method, url) => (
 `const method = '${method}';
 
 const request = {
@@ -25,4 +25,6 @@ Liferay.Util.fetch(
 ).then(res => {
 	console.log('res', res);
 });`
-)
+);
+
+export default javascriptExample;

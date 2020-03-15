@@ -1,6 +1,6 @@
 import React from 'react';
 
-style = {
+const style = {
 	overflow: 'visible',
 	tabSize: 4
 };
