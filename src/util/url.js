@@ -6,16 +6,20 @@ export const getSearchParams = (params, values) => {
 	var searchParams = new URLSearchParams();
 
 	params.forEach(function (param) {
-		if (param.in == 'query') {
-			searchParams.set(param.name, values[param.name]);
+		const value = values[param.name];
+
+		if (param.in == 'query' && value) {
+			searchParams.set(param.name, value);
 		}
 	});
 
-	return searchParams.toString();
+	const paramsString = searchParams.toString();
+
+	return (paramsString.length > 0) ? `?${searchParams.toString()}` : '';
 };
 
 export const getURL = ({baseURL, path, params, values}) => {
-	return `${baseURL}${replaceParams(path, params, values)}?${getSearchParams(params, values)}`;
+	return baseURL + replaceParams(path, params, values) + getSearchParams(params, values);
 };
 
 export const replaceParams = (path, params, values) => {

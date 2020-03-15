@@ -6,15 +6,13 @@ const METHOD_MAP = {
 	put: 'PUT'
 }
 
-const fetch = (url, method, data = {}) => {
+const fetch = (url, method, data = '') => {
 	const request = {
 		method: METHOD_MAP[method]
 	};
 
 	if (method === 'post') {
-		const body = JSON.stringify(data);
-
-		request.body = body;
+		request.body = data;
 
 		const headers = new Headers();
 

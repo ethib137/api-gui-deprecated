@@ -5,9 +5,10 @@ import ClayButton from '@clayui/button';
 import {withFormik} from 'formik';
 
 import Icon from './Icon';
-import CFErrorMessage from './form/CFErrorMessage';
+import CFInput from './form/CFInput';
 
 import fetch from './util/fetch';
+import {getSchema} from './util/util';
 import {generateKey, getLocalStorage, setLocalStorage} from './util/storage';
 import {getURL} from './util/url';
 
@@ -25,7 +26,7 @@ const APIForm = props => {
 		values,
 	} = props;
 
-	const {operationId, parameters} = methodData;
+	const {operationId, parameters, requestBody} = methodData;
 
 	useEffect(() => {
 		setLocalStorage(generateKey(operationId), values);
@@ -36,32 +37,12 @@ const APIForm = props => {
 	return (
 		<form onSubmit={handleSubmit}>
 			{parameters && parameters.map(({name, required, schema}) => (
-				<ClayForm.Group
-					className={errors[name] && touched[name] ? 'has-error' : ''}
-					key={name}
-				>
-					<label htmlFor={name}>
-						{name}
-						{!!required && 
-							<Icon className="reference-mark" symbol="asterisk" />
-						}
-					</label>
-
-					<div className="input-group">
-						<ClayInput
-							name={name}
-							type="text"
-							onChange={handleChange}
-							onBlur={handleBlur}
-							value={values[name]}
-						/>
-
-						<span className="input-group-addon">{schema.type}</span>
-					</div>
-
-					<CFErrorMessage name={name} />
-				</ClayForm.Group>
+				<CFInput key={name} name={name} required={required} schema={schema.type} />
 			))}
+
+			{requestBody &&
+				<CFInput component="textarea" name="bodyContent" required={false} schema={getSchema(requestBody)} />
+			}
 
 			<ClayForm.Group className="mt-5">
 				<label htmlFor="url">{'URL'}</label>
@@ -88,7 +69,7 @@ const APIForm = props => {
 
 const formikAPIForm = withFormik({
 	mapPropsToValues: props => {
-		const {operationId, parameters} = props.methodData;
+		const {operationId, parameters, requestBody} = props.methodData;
 
 		const initialValues = {};
 
@@ -97,6 +78,10 @@ const formikAPIForm = withFormik({
 		parameters.forEach(({name}) => {
 			initialValues[name] = storedValues[name] || '';
 		});
+
+		if (requestBody) {
+			initialValues['bodyContent'] = storedValues['bodyContent'] || '';
+		}
 
 		return initialValues;
 	},
@@ -130,7 +115,7 @@ const formikAPIForm = withFormik({
 
 		setAPIURL(url);
 
-		fetch(url, method).then(res => {
+		fetch(url, method, values.bodyContent).then(res => {
 			setResponse(res);
 			setSubmitting(false);
 		});
