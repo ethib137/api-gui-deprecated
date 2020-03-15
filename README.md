@@ -1,6 +1,6 @@
 # Liferay API GUI
 
-A GUI for exploring Liferay's API's.
+A GUI for exploring Liferay's API's in Liferay DXP `7.3`.
 
 ## Usage
 
