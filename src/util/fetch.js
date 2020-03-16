@@ -6,7 +6,7 @@ const METHOD_MAP = {
 	put: 'PUT'
 }
 
-const fetch = (url, method, data = '') => {
+const fetch = (url, method = 'get', data = '') => {
 	const request = {
 		method: METHOD_MAP[method]
 	};

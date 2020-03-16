@@ -2,36 +2,54 @@ import React, {useEffect, useState} from 'react';
 
 import ClayTabs from '@clayui/tabs';
 
-import useSearchParams from './hooks/useSearchParams';
-
 import APIForm from './APIForm';
 import JavascriptExample from './JavascriptExample';
 import MethodBadge from './MethodBadge';
 import ResponseDisplay from './ResponseDisplay';
+import {useAppState} from './hooks/appState';
 
-const APIDisplay = ({baseURL, path, pathData, selectedMethod, setMethod}) => {
-	const [apiURL, setAPIURL] = useState('');
-	const [response, setResponse] = useState();
+const APIDisplay = () => {
+	const [state, dispatch] = useAppState();
+
+	const {
+		apiResponse,
+		apiURL,
+		method,
+		path,
+		paths
+	} = state;
+
 	const [tabIndex, setTabIndex] = useState(0);
 
-	const methodData = pathData[selectedMethod];
+	const pathData = paths[path];
+
+	const methodData = pathData[method];
 
 	const tabs = [
-		['Result', <ResponseDisplay response={response} />],
-		['Javascript Example', <JavascriptExample method={selectedMethod} url={apiURL} />]
+		['Result', <ResponseDisplay response={apiResponse} />],
+		['Javascript Example', <JavascriptExample method={method} url={apiURL} />]
 	];
 
 	return (
 		<div>
 			<h1 className="align-items-center d-flex">
 				{path}
-				<MethodBadge className="ml-2" method={selectedMethod} />
+				<MethodBadge className="ml-2" method={method} />
 			</h1>
 
 			<div className="align-items-center d-flex mb-4">
-				{Object.keys(pathData).map(method => (
-					<button className="btn-unstyled d-flex text-light" key={method} onClick={() => setMethod(method)}>
-						<MethodBadge className={'flex-shrink-0'} displayType={method != selectedMethod ? 'secondary' : null} method={method} />
+				{Object.keys(pathData).map(key => (
+					<button
+						className="btn-unstyled d-flex text-light"
+						key={key}
+						onClick={() => {
+							dispatch({
+								method: key,
+								type: 'SELECT_METHOD'
+							})
+						}}
+					>
+						<MethodBadge className={'flex-shrink-0'} displayType={key != method ? 'secondary' : null} method={key} />
 					</button>
 				))}
 			</div>
@@ -40,18 +58,19 @@ const APIDisplay = ({baseURL, path, pathData, selectedMethod, setMethod}) => {
 				<p>{methodData.description}</p>
 			}
 
-			{methodData &&
-				<APIForm
-					baseURL={baseURL}
-					method={selectedMethod}
-					methodData={methodData}
-					path={path}
-					setAPIURL={setAPIURL}
-					setResponse={setResponse}
-				/>
-			}
+			<APIForm
+				methodData={methodData}
+				apiURL={apiURL}
+				method={method}
+				onResponse={response => {
+					dispatch({
+						type: 'LOAD_API_RESPONSE',
+						response
+					});
+				}}
+			/>
 
-			{response &&
+			{apiResponse &&
 				<>
 					<ClayTabs>
 						{tabs.map((tab, i) => (

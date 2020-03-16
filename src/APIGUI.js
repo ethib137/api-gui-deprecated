@@ -5,14 +5,13 @@ import ClayAlert from '@clayui/alert';
 
 import APIDisplay from './APIDisplay';
 import CategoryList from './CategoryList';
+import fetch from './util/fetch';
 import SchemaExplorer from './SchemaExplorer';
 import SchemaList from './SchemaList';
-
-import useSearchParams from './hooks/useSearchParams';
-
+import {getCategoryURL} from './util/url';
+import {setSearchParam} from './util/params';
 import {spritemap} from './Icon';
-import fetch from './util/fetch';
-import {getBaseURL} from './util/url';
+import {useAppState} from './hooks/appState';
 
 const APIDisplayStyle = {
 	height: 'calc(100% - 104px)',
@@ -20,52 +19,77 @@ const APIDisplayStyle = {
 };
 
 const APIGUI = props => {
-	const [apiCategories, setAPICategories] = useState({});
-	const [paths, setPaths] = useState();
-	const [schemas, setSchemas] = useState();
+	const [state, dispatch] = useAppState();
 
-	const [selectedCategoryKey, setSelectedCategoryKey] = useSearchParams('APIGroup');
-	const [path, setPath] = useSearchParams('path');
-	const [selectedMethod, setMethod] = useSearchParams('method');
-	const [isExploringSchemas, setIsExploringSchemas] = useSearchParams('exploring-schemas', false);
-
-	useEffect(() => {
-		if (paths && path) {
-			setMethod(Object.keys(paths[path])[0])
-		}
-	},[path]);
-
-	const categoryURL = apiCategories && selectedCategoryKey && apiCategories[selectedCategoryKey] ? apiCategories[selectedCategoryKey][0] : '';
+	const {
+		categoryKey,
+		categories,
+		method,
+		path,
+		paths,
+		schemas,
+		showSchemas
+	} = state;
 
 	useEffect(() => {
+		setSearchParam('category', categoryKey);
+	}, [categoryKey]);
+
+	useEffect(() => {
+		setSearchParam('path', path);
+	}, [path]);
+
+	useEffect(() => {
+		setSearchParam('method', method);
+	}, [method]);
+
+	useEffect(() => {
+		setSearchParam('show-schemas', showSchemas);
+	}, [showSchemas]);
+
+	useEffect(() => {
+		let current = true;
+
 		fetch('/o/openapi', 'get', {}).then(
 			res => {
-				var categories = {};
+				if (current) {
+					var categories = {};
 
-				Object.keys(res).map(key => {
-					categories[key] = res[key].map(url => url.replace('openapi.yaml', 'openapi.json'));
-				});
+					Object.keys(res).map(key => {
+						categories[key] = res[key].map(url => url.replace('openapi.yaml', 'openapi.json'));
+					});
 
-				if (!selectedCategoryKey) {
-					setSelectedCategoryKey(Object.keys(categories)[0])
+					dispatch({
+						type: 'LOAD_CATEGORIES',
+						categories
+					});
 				}
-
-				setAPICategories(categories);
 			}
 		);
+
+		return () => (current = false);
 	}, []);
 
 	useEffect(() => {
-		if (selectedCategoryKey && apiCategories[selectedCategoryKey]) {
-			fetch(apiCategories[selectedCategoryKey], 'get', {}).then(
-				categoryData => {
-					setPaths(categoryData.paths);
+		let current = true;
 
-					setSchemas(categoryData.components.schemas);
+		const categoryURL = getCategoryURL(categories, categoryKey);
+
+		if (categoryURL) {
+			fetch(categoryURL).then(
+				category => {
+					if (current) {
+						dispatch({
+							type: 'LOAD_CATEGORY',
+							category
+						});
+					}
 				}
 			);
 		}
-	}, [selectedCategoryKey, apiCategories])
+
+		return () => (current = false);
+	}, [categoryKey, categories])
 
 	return (
 		<div className="api-gui-root">
@@ -80,22 +104,26 @@ const APIGUI = props => {
 									<a
 										href="javascript:;"
 										onClick={() => {
-											setIsExploringSchemas(!isExploringSchemas);
+											dispatch({
+												type: 'TOGGLE_SCHEMAS'
+											});
 										}}
 									>
-										{isExploringSchemas ? 'Hide Schemas' : 'Show Schemas'}
+										{showSchemas ? 'Hide Schemas' : 'Show Schemas'}
 									</a>
 								}
 							</label>
 							<ClaySelect
 								aria-label="Select API Category"
 								onChange={e => {
-									setPath();
-									setSelectedCategoryKey(e.currentTarget.value);
+									dispatch({
+										type: 'SELECT_CATEGORY',
+										categoryKey: e.currentTarget.value
+									});
 								}}
-								value={selectedCategoryKey}
+								value={categoryKey}
 							>
-								{Object.keys(apiCategories).map(key => (
+								{categories && Object.keys(categories).map(key => (
 									<ClaySelect.Option
 										key={key}
 										label={key}
@@ -108,9 +136,14 @@ const APIGUI = props => {
 						<div className="api-list border-top p-3" style={APIDisplayStyle}>
 							{paths &&
 								<CategoryList
-									baseURL={selectedCategoryKey}
+									baseURL={categoryKey}
 									curPath={path}
-									onClick={(path) => setPath(path)}
+									onClick={selPath => {
+										dispatch({
+											path: selPath,
+											type: 'SELECT_PATH'
+										});
+									}}
 									paths={paths}
 								/>
 							}
@@ -118,14 +151,8 @@ const APIGUI = props => {
 					</div>
 
 					<div className="col col-md-7 border p-3 overflow-auto vh-100">
-						{path && paths && paths[path][selectedMethod] && !isExploringSchemas &&
-							<APIDisplay
-								baseURL={getBaseURL(categoryURL)}
-								path={path}
-								pathData={paths[path]}
-								selectedMethod={selectedMethod}
-								setMethod={setMethod}
-							/>
+						{paths && path && method && !showSchemas &&
+							<APIDisplay />
 						}
 
 						{!path && 
@@ -134,14 +161,14 @@ const APIGUI = props => {
 							</ClayAlert>
 						}
 
-						{isExploringSchemas && schemas &&
-							<SchemaExplorer category={selectedCategoryKey} schemas={schemas} />
+						{showSchemas && schemas &&
+							<SchemaExplorer category={categoryKey} schemas={schemas} />
 						}
 					</div>
 
-					{false && paths && paths[path][selectedMethod] && schemas &&
+					{false && paths && paths[path][method] && schemas &&
 						<div className="col col-md-2 border p-3 overflow-auto vh-100">
-							<SchemaList methodData={paths[path][selectedMethod]} schemas={schemas} />
+							<SchemaList methodData={paths[path][method]} schemas={schemas} />
 						</div>
 					}
 				</div>

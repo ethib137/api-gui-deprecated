@@ -4,24 +4,32 @@ import ClayForm, {ClayInput} from '@clayui/form';
 import ClayButton from '@clayui/button';
 import {withFormik} from 'formik';
 
-import Icon from './Icon';
 import CFInput from './form/CFInput';
-
 import fetch from './util/fetch';
-import {getSchema} from './util/util';
+import Icon from './Icon';
 import {generateKey, getLocalStorage, setLocalStorage} from './util/storage';
+import {getBaseURL, getCategoryURL} from './util/url';
+import {getSchema} from './util/util';
 import {getURL} from './util/url';
+import {useAppState} from './hooks/appState';
 
 const APIForm = props => {
+	const [state, dispatch] = useAppState();
+
 	const {
-		baseURL,
+		apiURL,
+		categories,
+		categoryKey,
+		path
+	} = state;
+
+	const {
 		errors,
 		handleBlur,
 		handleChange,
 		handleSubmit,
-		methodData,
-		path,
 		isSubmitting,
+		methodData,
 		touched,
 		values,
 	} = props;
@@ -30,9 +38,18 @@ const APIForm = props => {
 
 	useEffect(() => {
 		setLocalStorage(generateKey(operationId), values);
-	}, [values])
+	}, [operationId, values]);
 
-	const url = getURL({baseURL, path, params: parameters, values});
+	useEffect(() => {
+		const categoryURL = getCategoryURL(categories, categoryKey);
+
+		const baseURL = getBaseURL(categoryURL)
+
+		dispatch({
+			type: 'SET_API_URL',
+			url: getURL({baseURL, path, params: parameters, values})
+		});
+	}, [path, parameters, values])
 
 	return (
 		<form onSubmit={handleSubmit}>
@@ -53,7 +70,7 @@ const APIForm = props => {
 							disabled
 							name="url"
 							type="text"
-							value={url}
+							value={apiURL}
 						/>
 					</ClayInput.GroupItem>
 					<ClayInput.GroupItem append shrink>
@@ -97,26 +114,11 @@ const formikAPIForm = withFormik({
 		return errors;
 	},
 	handleSubmit: (values, {props, setSubmitting}) => {
-		const {
-			baseURL,
-			method,
-			methodData,
-			path,
-			setResponse,
-			setAPIURL
-		} = props;
+		const {apiURL, method, onResponse} = props
 
-		const url = getURL({
-			baseURL,
-			path,
-			params: methodData.parameters,
-			values
-		});
+		fetch(apiURL, method, values.bodyContent).then(res => {
+			onResponse(res)
 
-		setAPIURL(url);
-
-		fetch(url, method, values.bodyContent).then(res => {
-			setResponse(res);
 			setSubmitting(false);
 		});
 	},

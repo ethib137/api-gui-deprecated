@@ -10,7 +10,7 @@ const METHOD_DISPLAY_MAP = {
 	'delete': 'danger'
 }
 
-export default function(props) {
+const MethodBadge = (props) => {
 	const {displayType, method, ...otherProps} = props;
 
 	return (
@@ -21,3 +21,5 @@ export default function(props) {
 		/>
 	);
 }
+
+export default MethodBadge;
