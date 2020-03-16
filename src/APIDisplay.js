@@ -8,6 +8,10 @@ import MethodBadge from './MethodBadge';
 import ResponseDisplay from './ResponseDisplay';
 import {useAppState} from './hooks/appState';
 
+const badgeStyle = {
+	outline: 'none'
+};
+
 const APIDisplay = () => {
 	const [state, dispatch] = useAppState();
 
@@ -32,15 +36,12 @@ const APIDisplay = () => {
 
 	return (
 		<div>
-			<h1 className="align-items-center d-flex">
-				{path}
-				<MethodBadge className="ml-2" method={method} />
-			</h1>
+			<h1>{path}</h1>
 
 			<div className="align-items-center d-flex mb-4">
 				{Object.keys(pathData).map(key => (
 					<button
-						className="btn-unstyled d-flex text-light"
+						className="btn-unstyled d-flex mr-2 text-light"
 						key={key}
 						onClick={() => {
 							dispatch({
@@ -48,6 +49,7 @@ const APIDisplay = () => {
 								type: 'SELECT_METHOD'
 							})
 						}}
+						style={badgeStyle}
 					>
 						<MethodBadge className={'flex-shrink-0'} displayType={key != method ? 'secondary' : null} method={key} />
 					</button>
