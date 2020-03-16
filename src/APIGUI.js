@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 
 import ClayForm, {ClaySelect} from '@clayui/form';
+import ClayAlert from '@clayui/alert';
 
 import APIDisplay from './APIDisplay';
 import CategoryList from './CategoryList';
@@ -9,6 +10,7 @@ import SchemaList from './SchemaList';
 
 import useSearchParams from './hooks/useSearchParams';
 
+import {spritemap} from './Icon';
 import fetch from './util/fetch';
 import {getBaseURL} from './util/url';
 
@@ -124,6 +126,12 @@ const APIGUI = props => {
 								selectedMethod={selectedMethod}
 								setMethod={setMethod}
 							/>
+						}
+
+						{!path && 
+							<ClayAlert displayType="info" spritemap={spritemap} title="Info">
+								{'Please select an API from the list on the left.'}
+							</ClayAlert>
 						}
 
 						{isExploringSchemas && schemas &&
