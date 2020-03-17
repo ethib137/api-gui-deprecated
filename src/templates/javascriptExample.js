@@ -38,7 +38,18 @@ Liferay.Util.fetch(
 	'${url}',
 	request
 ).then(
-	res => res.json()
+	res => {
+		let retVal;
+
+		if (method == 'delete' && res.status == 204) {
+			retVal = 'Deleted Successfully';
+		}
+		else {
+			retVal = res.json();
+		}
+
+		return retVal;
+	}
 ).then(res => {
 	console.log('res', res);
 });`

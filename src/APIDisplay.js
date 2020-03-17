@@ -66,9 +66,10 @@ const APIDisplay = () => {
 			</div>
 
 			<APIForm
-				methodData={methodData}
 				apiURL={apiURL}
+				key={methodData.operationId}
 				method={method}
+				methodData={methodData}
 				onResponse={({contentType, data, response}) => {
 					dispatch({
 						contentType,

@@ -28,7 +28,18 @@ const fetch = (url, method = 'get', data, contentType) => {
 		url,
 		request
 	).then(
-		res => res.json()
+		res => {
+			let retVal;
+
+			if (method == 'delete' && res.status == 204) {
+				retVal = 'Deleted Successfully';
+			}
+			else {
+				retVal = res.json();
+			}
+
+			return retVal;
+		}
 	);
 }
 
