@@ -65,21 +65,7 @@ const APIDisplay = () => {
 				}
 			</div>
 
-			<APIForm
-				apiURL={apiURL}
-				key={methodData.operationId}
-				method={method}
-				methodData={methodData}
-				onResponse={({contentType, data, response}) => {
-					dispatch({
-						contentType,
-						data,
-						response,
-						type: 'LOAD_API_RESPONSE'
-					});
-				}}
-				schemas={schemas}
-			/>
+			<APIForm />
 
 			{apiResponse &&
 				<div className="sheet-section">

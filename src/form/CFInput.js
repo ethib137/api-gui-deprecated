@@ -13,7 +13,7 @@ const CFInput = props => {
 		formik,
 		name,
 		required,
-		schema,
+		type,
 		...otherProps
 	} = props;
 
@@ -53,7 +53,7 @@ const CFInput = props => {
 					/>
 				</ClayInput.GroupItem>
 				<ClayInput.GroupItem append shrink>
-					<ClayInput.GroupText className="h-100">{schema}</ClayInput.GroupText>
+					<ClayInput.GroupText className="h-100">{type}</ClayInput.GroupText>
 				</ClayInput.GroupItem>
 			</ClayInput.Group>
 

@@ -19,6 +19,7 @@ const appStateReducer = (state, action) => {
 		case 'LOAD_API_RESPONSE': {
 			return {
 				...state,
+				apiURL: action.apiURL,
 				apiResponse: action.response,
 				contentType: action.contentType,
 				requestBodyData: action.data

@@ -7,7 +7,6 @@ import APIDisplay from './APIDisplay';
 import CategoryList from './CategoryList';
 import fetch from './util/fetch';
 import SchemaExplorer from './SchemaExplorer';
-import SchemaList from './SchemaList';
 import {getCategoryURL} from './util/url';
 import {setSearchParam} from './util/params';
 import {spritemap} from './Icon';
@@ -165,12 +164,6 @@ const APIGUI = props => {
 							<SchemaExplorer category={categoryKey} schemas={schemas} />
 						}
 					</div>
-
-					{false && paths && paths[path][method] && schemas &&
-						<div className="col col-md-2 border p-3 overflow-auto vh-100">
-							<SchemaList methodData={paths[path][method]} schemas={schemas} />
-						</div>
-					}
 				</div>
 			</div>
 		</div>

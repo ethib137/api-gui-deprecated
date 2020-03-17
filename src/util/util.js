@@ -7,29 +7,29 @@ const REQUEST_BODY_TYPES = [
 	'multipart/form-data'
 ];
 
-export const getSchema = (requestBody) => {
-	let schema = '';
+export const getSchemaType = (requestBody) => {
+	let schemaType = '';
 
 	if (requestBody) {
 		const {content} = requestBody;
 
-		let schemaObj = {};
+		let schema = {};
 
 		REQUEST_BODY_TYPES.forEach(type => {
 			if (content[type]) {
-				schemaObj = content[type].schema;
+				schema = content[type].schema;
 			}
 		});
 
-		if (schemaObj['$ref']) {
-			schema = schemaObj['$ref'].replace('#/components/schemas/', '');
+		if (schema['$ref']) {
+			schemaType = schema['$ref'].replace('#/components/schemas/', '');
 		}
 		else {
-			schema = schemaObj.type;
+			schemaType = schema.type;
 		}
 	}
 
-	return schema;
+	return schemaType;
 }
 
 export const stringify = json => {
