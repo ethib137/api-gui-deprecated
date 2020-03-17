@@ -1,24 +1,27 @@
-const METHOD_MAP = {
-	'delete': 'DELETE',
-	get: 'GET',
-	patch: 'PATCH',
-	post: 'POST',
-	put: 'PUT'
-}
-
-const fetch = (url, method = 'get', data = '') => {
+const fetch = (url, method = 'get', data, contentType) => {
 	const request = {
-		method: METHOD_MAP[method]
+		method: method.toUpperCase()
 	};
 
-	if (method === 'post') {
-		request.body = data;
+	if (method === 'post' || method === 'put') {
+		if (contentType === 'application/json') {
+			request.body = JSON.stringify(data);
 
-		const headers = new Headers();
+			const headers = new Headers();
 
-		headers.append('Content-Type', 'application/json');
+			headers.append('Content-Type', contentType);
 
-		request.headers = headers;
+			request.headers = headers;
+		}
+		else if (contentType === 'multipart/form-data') {
+			const formData  = new FormData();
+
+			for(const name in data) {
+				formData.append(name, data[name]);
+			}
+
+			request.body = formData;
+		}
 	}
 
 	return Liferay.Util.fetch(

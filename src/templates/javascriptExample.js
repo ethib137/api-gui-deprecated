@@ -1,20 +1,37 @@
-const javascriptExample = (method, url) => (
-`const method = '${method}';
+import {stringify} from '../util/util';
+
+const stringOrNull = string => {
+	return string ? `'${string}'` : null;
+}
+
+const javascriptExample = ({contentType, data, method, url}) => (
+`const contentType = ${stringOrNull(contentType)};
+const data = ${stringify(data)};
+const method = '${method.toUpperCase()}';
 
 const request = {
 	method: method
 };
 
-if (method === 'POST') {
-	const body = JSON.stringify(data);
+if (method === 'POST' || method === 'PUT') {
+	if (contentType === 'application/json') {
+		request.body = JSON.stringify(data);
 
-	request.body = body;
+		const headers = new Headers();
 
-	const headers = new Headers();
+		headers.append('Content-Type', contentType);
 
-	headers.append('Content-Type', 'application/json');
+		request.headers = headers;
+	}
+	else if (contentType === 'multipart/form-data') {
+		const formData  = new FormData();
 
-	request.headers = headers;
+		for(const name in data) {
+			formData.append(name, data[name]);
+		}
+
+		request.body = formData;
+	}
 }
 
 Liferay.Util.fetch(

@@ -6,7 +6,7 @@ export const getBaseURL = categoryURL => {
 	return categoryURL.replace('/v1.0/openapi.json', '');
 }
 
-export const getSearchParams = (params, values) => {
+export const getSearchParams = (params = [], values) => {
 	var searchParams = new URLSearchParams();
 
 	params.forEach(function (param) {
@@ -27,11 +27,13 @@ export const getURL = ({baseURL, path, params, values}) => {
 };
 
 export const replaceParams = (path, params, values) => {
-	params.forEach(param => {
-		if (param.in == 'path') {
-			path = path.replace(`{${param.name}}`, values[param.name]);
-		}
-	});
+	if (params) {
+		params.forEach(param => {
+			if (param.in == 'path') {
+				path = path.replace(`{${param.name}}`, values[param.name]);
+			}
+		});
+	}
 
 	return path;
 };

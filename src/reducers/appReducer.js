@@ -5,9 +5,11 @@ const initialState = {
 	apiURL: '',
 	categoryKey: getSearchParam('category'),
 	categories: undefined,
+	contentType: undefined,
 	path: getSearchParam('path'),
 	paths: undefined,
 	method: getSearchParam('method'),
+	requestBodyData: undefined,
 	schemas: undefined,
 	showSchemas: getSearchParam('show-schemas') || false
 };
@@ -17,7 +19,9 @@ const appStateReducer = (state, action) => {
 		case 'LOAD_API_RESPONSE': {
 			return {
 				...state,
-				apiResponse: action.response
+				apiResponse: action.response,
+				contentType: action.contentType,
+				requestBodyData: action.data
 			};
 		}
 		case 'LOAD_CATEGORIES': {
@@ -44,15 +48,21 @@ const appStateReducer = (state, action) => {
 		case 'SELECT_CATEGORY': {
 			return {
 				...state,
+				apiResponse: undefined,
 				categoryKey: action.categoryKey,
+				contentType: undefined,
 				method: undefined,
-				path: undefined
+				path: undefined,
+				requestBodyData: undefined
 			};
 		}
 		case 'SELECT_METHOD': {
 			return {
 				...state,
-				method: action.method
+				apiResponse: undefined,
+				contentType: undefined,
+				method: action.method,
+				requestBodyData: undefined
 			};
 		}
 		case 'SELECT_PATH': {
@@ -60,8 +70,11 @@ const appStateReducer = (state, action) => {
 
 			return {
 				...state,
+				apiResponse: undefined,
+				contentType: undefined,
 				method: Object.keys(state.paths[path])[0],
-				path
+				path,
+				requestBodyData: undefined
 			};
 		}
 		case 'SET_API_URL': {

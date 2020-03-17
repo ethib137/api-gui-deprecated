@@ -13,7 +13,8 @@ const CFInput = props => {
 		formik,
 		name,
 		required,
-		schema
+		schema,
+		...otherProps
 	} = props;
 
 	const {
@@ -48,6 +49,7 @@ const CFInput = props => {
 						onChange={handleChange}
 						onBlur={handleBlur}
 						value={values[name]}
+						{...otherProps}
 					/>
 				</ClayInput.GroupItem>
 				<ClayInput.GroupItem append shrink>

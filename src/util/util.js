@@ -10,22 +10,28 @@ const REQUEST_BODY_TYPES = [
 export const getSchema = (requestBody) => {
 	let schema = '';
 
-	const {content} = requestBody;
+	if (requestBody) {
+		const {content} = requestBody;
 
-	let schemaObj = {};
+		let schemaObj = {};
 
-	REQUEST_BODY_TYPES.forEach(type => {
-		if (content[type]) {
-			schemaObj = content[type].schema;
+		REQUEST_BODY_TYPES.forEach(type => {
+			if (content[type]) {
+				schemaObj = content[type].schema;
+			}
+		});
+
+		if (schemaObj['$ref']) {
+			schema = schemaObj['$ref'].replace('#/components/schemas/', '');
 		}
-	});
-
-	if (schemaObj['$ref']) {
-		schema = schemaObj['$ref'].replace('#/components/schemas/', '');
-	}
-	else {
-		schema = schemaObj.type;
+		else {
+			schema = schemaObj.type;
+		}
 	}
 
 	return schema;
+}
+
+export const stringify = json => {
+	return JSON.stringify(json, null, 4);
 }

@@ -18,9 +18,12 @@ const APIDisplay = () => {
 	const {
 		apiResponse,
 		apiURL,
+		contentType,
 		method,
 		path,
-		paths
+		paths,
+		requestBodyData,
+		schemas
 	} = state;
 
 	const [tabIndex, setTabIndex] = useState(0);
@@ -30,50 +33,57 @@ const APIDisplay = () => {
 	const methodData = pathData[method];
 
 	const tabs = [
-		['Result', <ResponseDisplay response={apiResponse} />],
-		['Javascript Example', <JavascriptExample method={method} url={apiURL} />]
+		['Response', <ResponseDisplay response={apiResponse} />],
+		['Javascript Example', <JavascriptExample contentType={contentType} data={requestBodyData} method={method} url={apiURL} />]
 	];
 
 	return (
 		<div>
-			<h1>{path}</h1>
+			<div className="mb-2 sheet-header">
+				<h2 className="mb-2 sheet-title">{path}</h2>
 
-			<div className="align-items-center d-flex mb-4">
-				{Object.keys(pathData).map(key => (
-					<button
-						className="btn-unstyled d-flex mr-2 text-light"
-						key={key}
-						onClick={() => {
-							dispatch({
-								method: key,
-								type: 'SELECT_METHOD'
-							})
-						}}
-						style={badgeStyle}
-					>
-						<MethodBadge className={'flex-shrink-0'} displayType={key != method ? 'secondary' : null} method={key} />
-					</button>
-				))}
+				<div className="align-items-center d-flex sheet-text">
+					{Object.keys(pathData).map(key => (
+						<button
+							className="btn-unstyled d-flex mr-2 text-light"
+							key={key}
+							onClick={() => {
+								dispatch({
+									method: key,
+									type: 'SELECT_METHOD'
+								})
+							}}
+							style={badgeStyle}
+						>
+							<MethodBadge className={'flex-shrink-0'} displayType={key != method ? 'secondary' : null} method={key} />
+						</button>
+					))}
+				</div>
+
+				{methodData.description &&
+					<div className="sheet-text">{methodData.description}</div>
+				}
 			</div>
-
-			{methodData.description &&
-				<p>{methodData.description}</p>
-			}
 
 			<APIForm
 				methodData={methodData}
 				apiURL={apiURL}
 				method={method}
-				onResponse={response => {
+				onResponse={({contentType, data, response}) => {
 					dispatch({
-						type: 'LOAD_API_RESPONSE',
-						response
+						contentType,
+						data,
+						response,
+						type: 'LOAD_API_RESPONSE'
 					});
 				}}
+				schemas={schemas}
 			/>
 
 			{apiResponse &&
-				<>
+				<div className="sheet-section">
+					<h3 className="sheet-subtitle">{'Response'}</h3>
+
 					<ClayTabs>
 						{tabs.map((tab, i) => (
 							<ClayTabs.Item
@@ -96,7 +106,7 @@ const APIDisplay = () => {
 							</ClayTabs.TabPane>
 						))}
 					</ClayTabs.Content>
-				</>
+				</div>
 			}
 		</div>
 	);

@@ -9,11 +9,11 @@ const style = {
 
 // TODO: Add Post Support
 
-const JavascriptExample = ({method, url}) => {
+const JavascriptExample = ({contentType, data, method, url}) => {
 	return (
 		<div className="card overflow-auto vh-100">
 			<div className="p-3">
-				<pre style={style}>{javascriptExample(method, url)}</pre>
+				<pre style={style}>{javascriptExample({contentType, data, method, url})}</pre>
 			</div>
 		</div>
 	);
