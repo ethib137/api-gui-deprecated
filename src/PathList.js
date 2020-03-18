@@ -21,7 +21,7 @@ const PathList = props => {
 
 	let pathKeys = Object.keys(paths);
 
-	if (filter.length > 0) {
+	if (filter.trim().length > 0) {
 		pathKeys = pathKeys.filter(pathkey => pathkey.toLowerCase().includes(filter.toLowerCase()));
 	}
 
