@@ -7,7 +7,7 @@ const setSearchParamsWithoutPageReload = qs => {
 export const setSearchParam = (key, value) => {
 	const searchParams = new URLSearchParams(location.search);
 
-	if (value) {
+	if (value && value.length > 0) {
 		searchParams.set(key, value);
 	}
 	else {

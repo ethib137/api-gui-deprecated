@@ -6,6 +6,7 @@ const initialState = {
 	categoryKey: getSearchParam('category'),
 	categories: undefined,
 	contentType: undefined,
+	filter: getSearchParam('filter') || '',
 	path: getSearchParam('path'),
 	paths: undefined,
 	method: getSearchParam('method'),
@@ -82,6 +83,12 @@ const appStateReducer = (state, action) => {
 			return {
 				...state,
 				apiURL: action.url
+			};
+		}
+		case 'SET_FILTER': {
+			return {
+				...state,
+				filter: action.filter
 			};
 		}
 		case 'TOGGLE_SCHEMAS': {

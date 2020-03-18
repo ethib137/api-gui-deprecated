@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react';
 
-import ClayForm, {ClaySelect} from '@clayui/form';
+import ClayForm, {ClayInput, ClaySelect} from '@clayui/form';
 import ClayAlert from '@clayui/alert';
 
 import APIDisplay from './APIDisplay';
-import CategoryList from './CategoryList';
+import PathList from './PathList';
 import fetch from './util/fetch';
 import SchemaExplorer from './SchemaExplorer';
 import {getCategoryURL} from './util/url';
@@ -13,7 +13,7 @@ import {spritemap} from './Icon';
 import {useAppState} from './hooks/appState';
 
 const APIDisplayStyle = {
-	height: 'calc(100% - 104px)',
+	height: 'calc(100% - 190px)',
 	overflowY: 'scroll'
 };
 
@@ -23,6 +23,7 @@ const APIGUI = props => {
 	const {
 		categoryKey,
 		categories,
+		filter,
 		method,
 		path,
 		paths,
@@ -41,6 +42,10 @@ const APIGUI = props => {
 	useEffect(() => {
 		setSearchParam('method', method);
 	}, [method]);
+
+	useEffect(() => {
+		setSearchParam('filter', filter);
+	}, [filter]);
 
 	useEffect(() => {
 		setSearchParam('show-schemas', showSchemas);
@@ -132,11 +137,28 @@ const APIGUI = props => {
 							</ClaySelect>
 						</ClayForm.Group>
 
+						<ClayForm.Group className="px-3 pt-0">
+							<label htmlFor="filter">{'Filter'}</label>
+
+							<ClayInput
+								name="filter"
+								type="text"
+								onChange={event => {
+									dispatch({
+										filter: event.target.value,
+										type: 'SET_FILTER'
+									})
+								}}
+								value={filter}
+							/>
+						</ClayForm.Group>
+
 						<div className="api-list border-top p-3" style={APIDisplayStyle}>
 							{paths &&
-								<CategoryList
+								<PathList
 									baseURL={categoryKey}
 									curPath={path}
+									filter={filter}
 									onClick={selPath => {
 										dispatch({
 											path: selPath,
