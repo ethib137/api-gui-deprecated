@@ -56,7 +56,7 @@ const APIFormBase = props => {
 				}
 
 				{parameters && parameters.map(({name, required, schema}) => (
-					<CFInput key={name} name={name} required={required} schema={schema.type} />
+					<CFInput key={name} name={name} required={required} type={schema.type} />
 				))}
 
 				{requestBody &&
