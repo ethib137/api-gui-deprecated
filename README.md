@@ -21,10 +21,12 @@ Explore available schemas.
 Update `.npmbuildrc` so that `liferayDir` points to your local Liferay bundle.
 
 ### Build it
-` $ npm run build `
+` $ npm install`
+` $ npm run build`
 
 
 ### Deploy to Liferay
+` $ npm install`
 ` $ npm run deploy`
 
 ## Issues & Questions Welcome
