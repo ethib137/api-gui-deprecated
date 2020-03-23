@@ -7,8 +7,6 @@ const style = {
 	tabSize: 4
 };
 
-// TODO: Add Post Support
-
 const JavascriptExample = ({contentType, data, method, url}) => {
 	return (
 		<div className="card overflow-auto vh-100">
