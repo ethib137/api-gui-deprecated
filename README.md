@@ -1,4 +1,6 @@
-# Liferay API GUI
+# Liferay API GUI (Deprecated)
+
+Replaced by: https://github.com/lfrsales/api-gui
 
 A GUI for exploring Liferay's API's in Liferay DXP `7.3`.
 
